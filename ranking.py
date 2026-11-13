@@ -1,6 +1,9 @@
 import re
+import os
+import json
 
 NICKNAME_MAX = 15
+RANKING_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ranking.json")
 
 def validate_nickname(nickname):
      """닉네임이 올바르면 None, 아니면 안내 메시지를 반환한다."""
@@ -11,3 +14,15 @@ def validate_nickname(nickname):
      if not re.fullmatch(r"[A-Za-z0-9]+", nickname):
          return "닉네임은 영문과 숫자만 사용할 수 있습니다."
      return None
+
+def load_records(path=RANKING_FILE):
+    """기록 파일을 읽어 {닉네임: 점수}를 반환한다. 파일이 없으면 빈 기록."""
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_records(records, path=RANKING_FILE):
+    """기록을 파일에 저장한다."""
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(records, f, ensure_ascii=False, indent=2)
