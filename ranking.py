@@ -1,6 +1,6 @@
 import re
 
-NICKNAME_max = 15
+NICKNAME_MAX = 15
 
 def validate_nickname(nickname):
      """닉네임이 올바르면 None, 아니면 안내 메시지를 반환한다."""
