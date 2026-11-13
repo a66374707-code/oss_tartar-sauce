@@ -22,8 +22,8 @@ def redraw(canvas): #canvas를 받아서 격자를 그리는 함수 redraw를 �
         fill = "#2b3a4a" if (row + col) % 2 == 0 else "#34475a" # 만약 칸의 (row + col) % 2 가 0면 2b3a4a이 색깔로 색칠 아니면 34475a 이 색깔로 색칠한다. like 체스판
        
         canvas.create_rectangle(x1, y1, x2, y2, fill=fill, outline="white", width=3) # 위에 코드에서 구한 칸의 모서리 좌표를 가지고 그곳에 위에서 fill색으로 안을 칠하고 테두리는 흰색 테두리 두께는 3인 사각형의 칸을 생성한다.
-        canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text=str(zone), fill="white", #생성한 칸 중앙 좌표((x1 + x2) / 2, (y1 + y2) / 2)에 그 칸에 숫자를 문자로 바꾸어 흰색으로, font=(글꼴, 크기, 굵기), min(cw, ch)는 둘 중 작은 값 거기에 0.22 곱해서 칸이 커지면 같이 커진다.
-                           font=("TkDefaultFont", int(min(cw, ch) * 0.22), "bold"))
+        # canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text=str(zone), fill="white", #생성한 칸 중앙 좌표((x1 + x2) / 2, (y1 + y2) / 2)에 그 칸에 숫자를 문자로 바꾸어 흰색으로, font=(글꼴, 크기, 굵기), min(cw, ch)는 둘 중 작은 값 거기에 0.22 곱해서 칸이 커지면 같이 커진다.
+        #                    font=("TkDefaultFont", int(min(cw, ch) * 0.22), "bold"))
 
 
 root = tk.Tk() # 창 만들기
