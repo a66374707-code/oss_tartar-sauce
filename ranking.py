@@ -16,12 +16,21 @@ def validate_nickname(nickname):
      return None
 
 def load_records(path=RANKING_FILE):
-    """기록 파일을 읽어 {닉네임: 점수}를 반환한다. 파일이 없으면 빈 기록."""
+    """기록 파일을 읽어 {닉네임: 점수}를 반환한다.
+    파일이 없으면 빈 기록으로 시작한다.
+    파일을 열 수 없거나 손상된 경우 오류 메세지를 출력하고 빈 기록으로 시작한다.
+    (프로그램은 종료되지 않는다.)"""
     if not os.path.exists(path):
         return {}
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        if not isinstance(data, dict):
+            raise ValueError("기록 파일이 올바른 형식이 아닙니다.")
+        return {str(name): int(score) for name, score in data.items()}
+    except (OSError, ValueError, TypeError) as e:
+         print(f"[오류] 기록 파일을 읽을 수 없어 새로 시작합니다: {e}")
+    return {}
 def save_records(records, path=RANKING_FILE):
     """기록을 파일에 저장한다."""
     with open(path, "w", encoding="utf-8") as f:
