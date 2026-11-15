@@ -52,5 +52,13 @@ def update_record(records, nickname, score):
     return False
 
 def get_top_n(records, n=TOP_N):
-    """"점수 높은 순으로 정렬해 상위 n개를 [(닉네임, 점수), ...]로 반환한다."""
-    return sorted(records.items(), key=lambda item:itemp[1], reverse=True)[:n]
+    """점수 높은 순으로 정렬해 상위 n개를 [(닉네임, 점수), ...]로 반환한다."""
+    return sorted(records.items(), key=lambda item:item[1], reverse=True)[:n]
+
+def submit_score(nickname,score,path=RANKING_FILE):
+    """게임 종료 후 점수를 등록하고 상위 기록을 반환한다.
+    닉네임 검사는 호출하는 화면에서 validate_nickname으로 먼저 수행 한다."""
+    records = load_records(path)
+    if update_record(records, nickname, score):
+        save_records(records, path)
+    return get_top_n(records)
