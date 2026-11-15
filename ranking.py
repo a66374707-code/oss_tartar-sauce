@@ -3,6 +3,7 @@ import os
 import re
 
 NICKNAME_MAX = 15  # 닉네임 최대 글자 수
+TOP_N = 10 # 순위표에 보여줄 순위 수
 RANKING_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ranking.json")
 
 
@@ -49,3 +50,7 @@ def update_record(records, nickname, score):
         records[nickname] = score
         return True
     return False
+
+def get_top_n(records, n=TOP_N):
+    """"점수 높은 순으로 정렬해 상위 n개를 [(닉네임, 점수), ...]로 반환한다."""
+    return sorted(records.items(), key=lambda item:itemp[1], reverse=True)[:n]
