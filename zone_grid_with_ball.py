@@ -22,8 +22,8 @@ def redraw(canvas): #canvas를 받아서 격자를 그리는 함수 redraw를 �
         fill = "#2b3a4a" if (row + col) % 2 == 0 else "#34475a" # 만약 칸의 (row + col) % 2 가 0면 2b3a4a이 색깔로 색칠 아니면 34475a 이 색깔로 색칠한다. like 체스판
        
         canvas.create_rectangle(x1, y1, x2, y2, fill=fill, outline="white", width=3) # 위에 코드에서 구한 칸의 모서리 좌표를 가지고 그곳에 위에서 fill색으로 안을 칠하고 테두리는 흰색 테두리 두께는 3인 사각형의 칸을 생성한다.
-        # canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text=str(zone), fill="white", #생성한 칸 중앙 좌표((x1 + x2) / 2, (y1 + y2) / 2)에 그 칸에 숫자를 문자로 바꾸어 흰색으로, font=(글꼴, 크기, 굵기), min(cw, ch)는 둘 중 작은 값 거기에 0.22 곱해서 칸이 커지면 같이 커진다.
-        #                    font=("TkDefaultFont", int(min(cw, ch) * 0.22), "bold"))
+        canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text=str(zone), fill="white", #생성한 칸 중앙 좌표((x1 + x2) / 2, (y1 + y2) / 2)에 그 칸에 숫자를 문자로 바꾸어 흰색으로, font=(글꼴, 크기, 굵기), min(cw, ch)는 둘 중 작은 값 거기에 0.22 곱해서 칸이 커지면 같이 커진다.
+                         font=("TkDefaultFont", int(min(cw, ch) * 0.22), "bold"))
 
 
 root = tk.Tk() # 창 만들기
@@ -73,10 +73,10 @@ def ball_move():
         root.after(1000, ball_start) # 공이 다 도착했으니까 1초 뒤에 새로운 공을 다시 보냄
 
     canvas.delete("ball") # 칸과 숫자는 냅두고 공만 지움
-    canvas.create_oval(cx - r, cy - r, cx + r, cy + r, fill="white", outline="black", width=3, tags="ball")
+    canvas.create_oval(cx - r, cy - r, cx + r, cy + r, fill="white", outline="black", width=5, tags="ball")
     # 중앙에서 반지름 r만큼 떨어진 원을 그림
     # width는 공의 테두리 두께,tags는 공을 지우고 다른곳에 공 위치를 나타낼때 공만 지우기 위해 공을 가리킬려고 만듦
-    # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 수정해야될듯(검은색 테두리 두께 넓혀도되고)
+    # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3 -> 5로 수정함
  
 
 root.after(5000, ball_start) # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯)
