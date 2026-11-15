@@ -77,7 +77,23 @@ def ball_move():
     # 중앙에서 반지름 r만큼 떨어진 원을 그림
     # width는 공의 테두리 두께,tags는 공을 지우고 다른곳에 공 위치를 나타낼때 공만 지우기 위해 공을 가리킬려고 만듦
     # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3 -> 5로 수정함
- 
+
+def ball_hit(num):
+    if num == ball["zone"]: # num이 공이 나오는 칸과 같다면
+        print("타격 성공") # 타격성공
+    else:
+        print("타격 실패") # 다르면 타격실패
+
+root.bind("1",lambda e: ball_hit(1)) # 1을 입력하면 ball_hit(num)의 num이 1이됨
+root.bind("2",lambda e: ball_hit(2))
+root.bind("3",lambda e: ball_hit(3))
+root.bind("4",lambda e: ball_hit(4))
+root.bind("5",lambda e: ball_hit(5))
+root.bind("6",lambda e: ball_hit(6))
+root.bind("7",lambda e: ball_hit(7))
+root.bind("8",lambda e: ball_hit(8))
+root.bind("9",lambda e: ball_hit(9))    
+# 타격 했을때 공이 나가는건 못함(일단 타격성공or실패로 출력되게만 만듦), 지금은 아무 타이밍에 입력을 해도 타격성공으로 나옴. 수정해야함 
 
 root.after(5000, ball_start) # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯)
 root.mainloop() # 없으면 바로 창이 꺼짐
