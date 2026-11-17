@@ -6,7 +6,7 @@ import random
 import time  
  
 GRID = 3 #격자를 3칸씩 나눈다는 뜻 숫자를 바꾸면 몇x몇으로 구현됨
-SIZE = 720 #창을 처음에 720×720 픽셀로 만든다는 뜻 나중에 수치는 바꾸엉야 할뜻 좀더 크게
+SIZE = 720 #창을 처음에 720×720 픽셀로 만든다는 뜻 나중에 수치는 바꾸어야 할뜻 좀더 크게
 
 def redraw(canvas): #canvas를 받아서 격자를 그리는 함수 redraw를 만든다
     canvas.delete("all") #이전 그림을 지우는 코드
