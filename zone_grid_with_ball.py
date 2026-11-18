@@ -83,7 +83,7 @@ def ball_move():
         root.after(1000, ball_start) # 공이 다 도착했으니까 1초 뒤에 새로운 공을 다시 보냄
 
     canvas.delete("ball") # 칸과 숫자는 냅두고 공만 지움
-    canvas.create_oval(cx - r, cy - r, cx + r, cy + r, fill="orange", outline="black", width=5, tags="ball")
+    canvas.create_oval(cx - r, cy - r, cx + r, cy + r, fill="orange", outline="black", width=3, tags="ball")
     # 중앙에서 반지름 r만큼 떨어진 원을 그림
     # width는 공의 테두리 두께,tags는 공을 지우고 다른곳에 공 위치를 나타낼때 공만 지우기 위해 공을 가리킬려고 만듦
     # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3 -> 5로 수정함
