@@ -60,6 +60,17 @@ def zone_center(canvas, zone):
     x1, y1 = col * cw, row * ch # 칸의 크기를 구현
     x2, y2 = x1 + cw, y1 + ch # 칸의 크기를 구현
     return (x1 + x2) / 2, (y1 + y2) / 2, min(cw, ch) # 중앙x, 중앙y 위치를 반환함(이 위치에 공을 그리기 위해서), min은 가로 세로 길이 중에서 더 작은 길이에 맞춰 그려야 칸을 벗어나지 않음
+
+def start_time(n=5):                                     # 함수 이름 start_time, n=5는 아무것도 안 넣으면 5부터 시작한다는 뜻
+    canvas.delete("count")                               # 이전 숫자만 지움 (이름표 "count")
+    if n > 0:
+        cx, cy, cell = zone_center(canvas, 5)            # [수정] 공 위치 구할 때처럼 5번 칸의 중앙 좌표와 칸 크기를 받음
+        canvas.create_text(cx, cy, text=str(n), fill="black",
+                           font=("TkDefaultFont", int(cell * 0.6), "bold"),
+                           tags="count")                 # [수정] 5번 칸 중앙에 칸 크기의 60% 크기로 숫자를 그림
+        root.after(1000, lambda: start_time(n - 1))      # 1초 뒤 숫자를 하나 줄여서 다시 실행
+    else:
+        ball_start() 
  
 def ball_start():   
     ball["zone"] = random.randint(1, GRID * GRID) # 9구역중에서 랜덤으로 공이 나오게 함
@@ -107,5 +118,6 @@ root.bind("8",lambda e: ball_hit(8))
 root.bind("9",lambda e: ball_hit(9))    
 # 타격 했을때 공이 나가는건 못함(일단 타격성공or실패로 출력되게만 만듦), 지금은 아무 타이밍에 입력을 해도 타격성공으로 나옴. 수정해야함 
 
-root.after(5000, ball_start) # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯)
+root.after(1000, start_time)  
+#root.after(5000, ball_start) # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯)
 root.mainloop() # 없으면 바로 창이 꺼짐
