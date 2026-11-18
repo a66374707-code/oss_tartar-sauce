@@ -70,7 +70,7 @@ def start_time(n=5):                                     # 함수 이름 start_t
                            tags="count")                 # [수정] 5번 칸 중앙에 칸 크기의 60% 크기로 숫자를 그림
         root.after(1000, lambda: start_time(n - 1))      # 1초 뒤 숫자를 하나 줄여서 다시 실행
     else:
-        ball_start() 
+        ball_start() # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯) 
  
 def ball_start():   
     ball["zone"] = random.randint(1, GRID * GRID) # 9구역중에서 랜덤으로 공이 나오게 함
@@ -119,5 +119,4 @@ root.bind("9",lambda e: ball_hit(9))
 # 타격 했을때 공이 나가는건 못함(일단 타격성공or실패로 출력되게만 만듦), 지금은 아무 타이밍에 입력을 해도 타격성공으로 나옴. 수정해야함 
 
 root.after(1000, start_time)  
-#root.after(5000, ball_start) # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯)
 root.mainloop() # 없으면 바로 창이 꺼짐
