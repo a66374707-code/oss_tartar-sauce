@@ -27,7 +27,7 @@ def redraw(canvas): #canvas를 받아서 격자를 그리는 함수 redraw를 �
 
 
 root = tk.Tk() # 창 만들기
-root.title("(임시) 구역 나누기") # 생성되 창에 이름
+root.title("집에서 즐기는 탁구 프로그램") # 생성되 창에 이름
 score = 0 # 현재 점수
 
 score_label = tk.Label(root, text="점수: 0", font=("TkDefaultFont", 20, "bold"), bg="#111", fg="white", pady=10)
