@@ -61,13 +61,13 @@ def zone_center(canvas, zone):
     x2, y2 = x1 + cw, y1 + ch # 칸의 크기를 구현
     return (x1 + x2) / 2, (y1 + y2) / 2, min(cw, ch) # 중앙x, 중앙y 위치를 반환함(이 위치에 공을 그리기 위해서), min은 가로 세로 길이 중에서 더 작은 길이에 맞춰 그려야 칸을 벗어나지 않음
 
-def start_time(n=5):                                     # 함수 이름 start_time, n=5는 아무것도 안 넣으면 5부터 시작한다는 뜻
-    canvas.delete("count")                               # 이전 숫자만 지움 (이름표 "count")
+def start_time(n=5): # 칸 생성되고 1초뒤에 5초 카운트가 시작됨
+    canvas.delete("count") # 5,4,3,2,1을 하나씩 그리고 지워야 하기에 이전 숫자를 지움
     if n > 0:
-        cx, cy, cell = zone_center(canvas, 5)            # [수정] 공 위치 구할 때처럼 5번 칸의 중앙 좌표와 칸 크기를 받음
+        cx, cy, cell = zone_center(canvas, 5) # 한 가운데에 카운트를 띄우도록 좌표를 설정함.(정확한 위치에 그릴 수 있도록)
         canvas.create_text(cx, cy, text=str(n), fill="black",
                            font=("TkDefaultFont", int(cell * 0.6), "bold"),
-                           tags="count")                 # [수정] 5번 칸 중앙에 칸 크기의 60% 크기로 숫자를 그림
+                           tags="count")                 
         root.after(1000, lambda: start_time(n - 1))      # 1초 뒤 숫자를 하나 줄여서 다시 실행
     else:
         ball_start() # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯) 
@@ -98,7 +98,7 @@ def ball_move():
     # 중앙에서 반지름 r만큼 떨어진 원을 그림
     # width는 공의 테두리 두께,tags는 공을 지우고 다른곳에 공 위치를 나타낼때 공만 지우기 위해 공을 가리킬려고 만듦
     # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3 -> 5로 수정함
-
+ 
 def ball_hit(num):
     if num == ball["zone"]: # num이 공이 나오는 칸과 같다면
         print("타격 성공") # 타격성공
@@ -116,7 +116,7 @@ root.bind("6",lambda e: ball_hit(6))
 root.bind("7",lambda e: ball_hit(7))
 root.bind("8",lambda e: ball_hit(8))
 root.bind("9",lambda e: ball_hit(9))    
-# 타격 했을때 공이 나가는건 못함(일단 타격성공or실패로 출력되게만 만듦), 지금은 아무 타이밍에 입력을 해도 타격성공으로 나옴. 수정해야함 
+# 타격 했을때 공이 나가는건 못함(일단 타격성공or실패로 출력되게만 만듦). 수정해야함 
 
-root.after(1000, start_time)  
+root.after(1000, start_time)
 root.mainloop() # 없으면 바로 창이 꺼짐
