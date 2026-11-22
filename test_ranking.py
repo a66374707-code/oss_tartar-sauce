@@ -19,5 +19,24 @@ class TestValidateNickname(unittest.TestCase):
         self.assertIsNotNone(ranking.validate_nickname("홍길동"))
 
 
+class TestUpdateRecord(unittest.TestCase):
+    """update_record(): 같은 닉네임은 최고 점수 하나만 유지하는지 검사한다."""
+
+    def test_새_닉네임은_추가된다(self):
+        records = {}
+        self.assertTrue(ranking.update_record(records, "amy", 100))
+        self.assertEqual(records, {"amy": 100})
+
+    def test_더_높은_점수는_갱신된다(self):
+        records = {"amy": 100}
+        self.assertTrue(ranking.update_record(records, "amy", 500))
+        self.assertEqual(records, {"amy": 500})
+
+    def test_더_낮은_점수는_무시된다(self):
+        records = {"amy": 100}
+        self.assertFalse(ranking.update_record(records, "amy", 50))
+        self.assertEqual(records, {"amy": 100})
+
+
 if __name__ == "__main__":
     unittest.main()
