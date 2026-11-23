@@ -1,3 +1,7 @@
+import contextlib
+import io
+import os
+import tempfile
 import unittest
 
 import ranking
@@ -56,6 +60,34 @@ class TestGetTopN(unittest.TestCase):
         top = ranking.get_top_n(records)
         self.assertEqual(len(top), 10)
         self.assertEqual(top[0], ("user11", 11))
+
+
+class TestRecordFile(unittest.TestCase):
+    """load_records / save_records: 파일 저장·불러오기와 손상된 파일 처리를 검사한다."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.path = os.path.join(self.tmp.name, "r.json")
+
+    def test_파일이_없으면_빈_기록(self):
+        self.assertEqual(ranking.load_records(self.path), {})
+
+    def test_저장한_기록을_그대로_불러온다(self):
+        ranking.save_records({"amy": 500, "bob": 300}, self.path)
+        self.assertEqual(ranking.load_records(self.path), {"amy": 500, "bob": 300})
+
+    def test_손상된_파일은_빈_기록(self):
+        with open(self.path, "w", encoding="utf-8") as f:
+            f.write("{ 깨진 내용")
+        with contextlib.redirect_stdout(io.StringIO()):   # 오류 메시지 출력을 숨김
+            self.assertEqual(ranking.load_records(self.path), {})
+
+    def test_형식이_틀린_파일은_빈_기록(self):
+        with open(self.path, "w", encoding="utf-8") as f:
+            f.write("[1, 2, 3]")
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(ranking.load_records(self.path), {})
 
 
 if __name__ == "__main__":
