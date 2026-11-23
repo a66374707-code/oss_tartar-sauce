@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>탁구 자세 인식 테스트</title>
+
+    <!-- Teachable Machine Pose 호환 버전 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8.6/dist/teachablemachine-pose.min.js"></script>
+</head>
+
+<body>
+    <h2>탁구 자세 인식 테스트</h2>
+
+    <button id="startButton" onclick="init()">인식 시작</button>
+
+    <p id="status">인식 시작 버튼을 눌러 주세요.</p>
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
+    <h3 id="result-container"></h3>
+
+    <script>
+        const URL = "/model/my_pose/";
+
+        const ZONE_MAP = {
+            "RU": 1, "MU": 2, "LU": 3,
+            "RM": 4, "MM": 5, "LM": 6,
+            "RD": 7, "MD": 8, "LD": 9
+        };
+
+        let model;
+        let webcam;
+        let labelContainer;
+        let lastSendTime = 0;
+        let isRunning = false;
+
+        async function init() {
+            if (isRunning) return;
+
+            const status = document.getElementById("status");
+            const button = document.getElementById("startButton");
+
+            try {
+                button.disabled = true;
+                status.innerText = "모델 불러오는 중...";
+
+                model = await tmPose.load(
+                    URL + "model.json",
+                    URL + "metadata.json"
+                );
+
+                status.innerText = "웹캠 연결 중...";
+
+                webcam = new tmPose.Webcam(400, 400, true);
+                await webcam.setup();
+                await webcam.play();
+
+                document.getElementById("webcam-container")
+                    .appendChild(webcam.canvas);
+
+                labelContainer = document.getElementById("label-container");
+                labelContainer.innerHTML = "";
+
+                for (let i = 0; i < model.getTotalClasses(); i++) {
+                    const div = document.createElement("div");
+                    labelContainer.appendChild(div);
+                }
+
+                isRunning = true;
+                status.innerText = "자세 인식 중";
+
+                window.requestAnimationFrame(loop);
+
+            } catch (error) {
+                console.error("초기화 오류:", error);
+                status.innerText = "초기화 실패: " + error.message;
+                button.disabled = false;
+            }
+        }
+
+        async function loop() {
+            if (!isRunning) return;
+
+            try {
+                webcam.update();
+                await predict();
+            } catch (error) {
+                console.error("인식 오류:", error);
+                document.getElementById("status").innerText =
+                    "인식 실패: " + error.message;
+
+                isRunning = false;
+                document.getElementById("startButton").disabled = false;
+                return;
+            }
+
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const { pose, posenetOutput } =
+                await model.estimatePose(webcam.canvas);
+
+            const prediction =
+                await model.predict(posenetOutput);
+
+            for (let i = 0; i < prediction.length; i++) {
+                labelContainer.childNodes[i].innerText =
+                    prediction[i].className + ": " +
+                    (prediction[i].probability * 100).toFixed(1) + "%";
+            }
+
+            const best = prediction.reduce((a, b) =>
+                a.probability > b.probability ? a : b
+            );
+
+            const zone = ZONE_MAP[best.className];
+
+            if (zone === undefined) return;
+
+            const confidence = best.probability;
+
+            document.getElementById("result-container").innerText =
+                "인식 구역: " + zone +
+                " / 신뢰도: " + (confidence * 100).toFixed(1) + "%";
+
+            const now = Date.now();
+
+            if (now - lastSendTime >= 500) {
+                lastSendTime = now;
+
+                try {
+                    const response = await fetch("/result", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            label: best.className,
+                            confidence: confidence
+                        })
+                    });
+
+                    if (!response.ok) {
+                        console.error("결과 전송 실패:", response.status);
+                    }
+                } catch (error) {
+                    console.error("Python 연결 오류:", error);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
