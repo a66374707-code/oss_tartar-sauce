@@ -38,5 +38,25 @@ class TestUpdateRecord(unittest.TestCase):
         self.assertEqual(records, {"amy": 100})
 
 
+class TestGetTopN(unittest.TestCase):
+    """get_top_n(): 점수 높은 순으로 정렬해 상위 n개만 돌려주는지 검사한다."""
+
+    def test_점수_높은_순으로_정렬된다(self):
+        records = {"amy": 100, "bob": 300, "cat": 200}
+        self.assertEqual(ranking.get_top_n(records),
+                         [("bob", 300), ("cat", 200), ("amy", 100)])
+
+    def test_n개만_돌려준다(self):
+        records = {"amy": 100, "bob": 300, "cat": 200}
+        self.assertEqual(ranking.get_top_n(records, 2),
+                         [("bob", 300), ("cat", 200)])
+
+    def test_기본값은_상위_10개(self):
+        records = {f"user{i}": i for i in range(12)}
+        top = ranking.get_top_n(records)
+        self.assertEqual(len(top), 10)
+        self.assertEqual(top[0], ("user11", 11))
+
+
 if __name__ == "__main__":
     unittest.main()
