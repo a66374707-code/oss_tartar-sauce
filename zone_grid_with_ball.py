@@ -31,7 +31,7 @@ root.title("집에서 즐기는 탁구 프로그램") # 생성되 창에 이름
 score = 0 # 현재 점수
 
 score_label = tk.Label(root, text="점수: 0", font=("TkDefaultFont", 20, "bold"), bg="#111", fg="white", pady=10)
-# Label은 글자를 보여주는 부품. text=처음에 보일 글자, font=(글꼴, 크기, 굵기), bg=배경색, fg=글자색, pady=위아래 여백
+# tk.Label은 글자를 보여주는 부품이며 화면에 글자를 표시함, text=처음에 보일 글자, font=(글꼴, 크기, 굵기), bg=배경색, fg=글자색, pady=위아래 여백
 score_label.pack(side="bottom", fill="x") # 창 맨 아래에 가로로 꽉 채워서 배치
 
 def add_score(points): # 점수를 올리고 화면의 글자도 같이 바꾸는 함수
@@ -42,6 +42,7 @@ canvas = tk.Canvas(root, width=SIZE, height=SIZE, bg="#111", highlightthickness=
 canvas.pack(fill="both", expand=True) # 도화지를 창 안에 배치, 창이 커지면 같이 커지게 한다. 
 canvas.bind("<Configure>", lambda e: redraw(canvas))   # 창 크기가 바뀌어도 다시 그림
 root.bind("<Escape>", lambda e: root.destroy()) #ESC를 누르면 창이 꺼짐
+
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #공이 다가오는 표시 코드
