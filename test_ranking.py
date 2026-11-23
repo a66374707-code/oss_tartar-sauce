@@ -90,5 +90,25 @@ class TestRecordFile(unittest.TestCase):
             self.assertEqual(ranking.load_records(self.path), {})
 
 
+class TestSubmitScore(unittest.TestCase):
+    """submit_score(): 불러오기 → 갱신 → 저장 → TOP 10 반환이 이어서 동작하는지 검사한다."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.path = os.path.join(self.tmp.name, "r.json")
+
+    def test_점수를_차례로_등록하면_최고_점수만_남는다(self):
+        self.assertEqual(ranking.submit_score("amy", 100, self.path),
+                         [("amy", 100)])
+        self.assertEqual(ranking.submit_score("bob", 300, self.path),
+                         [("bob", 300), ("amy", 100)])
+        self.assertEqual(ranking.submit_score("amy", 50, self.path),
+                         [("bob", 300), ("amy", 100)])
+        self.assertEqual(ranking.submit_score("amy", 500, self.path),
+                         [("amy", 500), ("bob", 300)])
+        self.assertEqual(ranking.load_records(self.path), {"amy": 500, "bob": 300})
+
+
 if __name__ == "__main__":
     unittest.main()
