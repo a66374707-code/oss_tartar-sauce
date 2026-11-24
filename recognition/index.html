@@ -15,7 +15,7 @@ const ZONE_MAP = {
 
 async function init() {
   const model = await tmPose.load(URL + "model.json", URL + "metadata.json");
-  const webcam = new  (400, 400, true);
+  const webcam = new tmPose.Webcam(400, 400, true);
   await webcam.setup();
   await webcam.play();
   document.body.appendChild(webcam.canvas);
