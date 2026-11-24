@@ -1,15 +1,20 @@
-"""랭킹 시스템 화면
+"""랭킹 시스템 화면 (tkinter).
 
 게임과 연결하는 방법 (한 기기에서 여러 사람이 번갈아 플레이):
 
     nickname = ranking_gui.ask_nickname(root)       # 게임 시작 전
     if nickname is None:
         ...                                         # 취소했으면 게임 시작 안 함
+    ... 게임 플레이 ...
+    ranking_gui.show_result(root, nickname, score)  # 게임 종료 후
 """
+import random
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 
 import ranking
+
+FONT = "맑은 고딕"
 
 
 def ask_nickname(parent):
@@ -28,18 +33,32 @@ def ask_nickname(parent):
         messagebox.showerror("입력 오류", error, parent=parent)
 
 
+def show_result(parent, nickname, score):
+    """게임 종료 후 호출한다. 점수를 등록하고 이번 점수를 결과창에 보여준다."""
+    ranking.submit_score(nickname, score)
+
+    win = tk.Toplevel(parent)
+    win.title("결과")
+    win.geometry("360x200")
+
+    tk.Label(win, text=f"{nickname}님의 점수", font=(FONT, 12)).pack(pady=(15, 0))
+    tk.Label(win, text=f"{score}점", font=(FONT, 28, "bold")).pack()
+    tk.Button(win, text="닫기", command=win.destroy).pack(pady=15)
+    parent.wait_window(win)
+
+
 if __name__ == "__main__":
-    # 닉네임 입력창만 시험해 보는 창
+    # 게임 없이 랭킹 화면만 시험해 보는 창 (점수는 랜덤)
     root = tk.Tk()
     root.title("랭킹 테스트")
     root.geometry("280x130")
 
-    def on_start():
+    def on_play():
         nickname = ask_nickname(root)
         if nickname is None:
-            messagebox.showinfo("취소", "닉네임 입력을 취소했습니다.", parent=root)
-        else:
-            messagebox.showinfo("입력 완료", f"{nickname}님, 환영합니다!", parent=root)
+            return
+        score = random.randint(0, 1000)   # 실제 게임에서는 플레이 결과 점수
+        show_result(root, nickname, score)
 
-    tk.Button(root, text="게임 시작", command=on_start).pack(expand=True)
+    tk.Button(root, text="게임 시작 (랜덤 점수)", command=on_play).pack(expand=True)
     root.mainloop()
