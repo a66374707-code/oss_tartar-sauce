@@ -8,14 +8,14 @@
 const URL = "/model/my_pose/";
 
 const ZONE_MAP = {
-  "RU": 1, "MU": 2, "LU": 3,
-  "RM": 4, "MM": 5, "LM": 6,
-  "RD": 7, "MD": 8, "LD": 9
+  "LU": 1, "MU": 2, "RU": 3,
+  "LM": 4, "MM": 5, "RM": 6,
+  "LD": 7, "MD": 8, "RD": 9
 };
 
 async function init() {
   const model = await tmPose.load(URL + "model.json", URL + "metadata.json");
-  const webcam = new tmPose.Webcam(400, 400, true);
+  const webcam = new  (400, 400, true);
   await webcam.setup();
   await webcam.play();
   document.body.appendChild(webcam.canvas);
