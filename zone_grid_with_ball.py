@@ -29,15 +29,22 @@ def redraw(canvas): #canvas를 받아서 격자를 그리는 함수 redraw를 �
 root = tk.Tk() # 창 만들기
 root.title("집에서 즐기는 탁구 프로그램") # 생성되 창에 이름
 score = 0 # 현재 점수
+lives = 3 # 현재 목숨
 
 score_label = tk.Label(root, text="점수: 0", font=("TkDefaultFont", 20, "bold"), bg="#111", fg="white", pady=10)
+lives_label = tk.Label(root, text="                                 목숨: 3", font=("TkDefaultFont", 20, "bold"), bg="#111", fg="white", pady=10)
 # tk.Label은 글자를 보여주는 부품이며 화면에 글자를 표시함, text=처음에 보일 글자, font=(글꼴, 크기, 굵기), bg=배경색, fg=글자색, pady=위아래 여백
 score_label.pack(side="bottom", fill="x") # 창 맨 아래에 가로로 꽉 채워서 배치
+lives_label.pack(side="bottom", fill="x") # 창 맨 아래에 가로로 꽉 채워서 배치
 
 def add_score(points): # 점수를 올리고 화면의 글자도 같이 바꾸는 함수
     global score # 함수 밖에 있는 score를 이 함수 안에서 바꾸겠다는 표시
     score += points # score = score + points 와 같음
     score_label.config(text=f"점수: {score}") # 라벨의 글자를 새 점수로 바꿈
+def add_lives(points): # 목숨을 늘리거나 줄이고 화면의 글자도 같이 바꾸는 함수
+    global lives # 함수 밖에 있는 lives를 이 함수 안에서 바꾸겠다는 표시
+    lives += points # lives = lives + points 와 같음
+    lives_label.config(text=f"목숨: {lives}") # 라벨의 글자를 새 목숨으로 바꿈 (score_label이 아니라 lives_label)
 canvas = tk.Canvas(root, width=SIZE, height=SIZE, bg="#111", highlightthickness=0) #생성된 창에 넣을 도화지를 720x720크기로 생성, 테두리를 없샘
 canvas.pack(fill="both", expand=True) # 도화지를 창 안에 배치, 창이 커지면 같이 커지게 한다. 
 canvas.bind("<Configure>", lambda e: redraw(canvas))   # 창 크기가 바뀌어도 다시 그림
@@ -109,8 +116,8 @@ def ball_hit(num): # 얘기한대로 0.7로 잡긴 했는데 실행해보니까 
         add_score(10)
     else:
         print("타격 실패") # 다르면 타격실패
-        add_score(-5)
-
+        add_lives(-1)
+        
 root.bind("1",lambda e: ball_hit(1)) # 1을 입력하면 ball_hit(num)의 num이 1이됨
 root.bind("2",lambda e: ball_hit(2))
 root.bind("3",lambda e: ball_hit(3))
