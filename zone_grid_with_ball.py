@@ -34,6 +34,7 @@ root.title("집에서 즐기는 탁구 프로그램") # 생성되 창에 이름
 score = 0 # 현재 점수
 lives = 3 # 현재 목숨
 is_over = False # 목숨이 다 떨어져서 게임이 끝났는지
+game_started = False # 5초 카운트다운이 끝나고 실제 게임이 시작되었는지
 
 score_label = tk.Label(root, text="점수: 0", font=("TkDefaultFont", 20, "bold"), bg="#111", fg="white", pady=10)
 lives_label = tk.Label(root, text="목숨: 3", font=("TkDefaultFont", 20, "bold"), bg="#111", fg="white", pady=10)
@@ -106,8 +107,10 @@ def start_time(n=5): # 칸 생성되고 1초뒤에 5초 카운트가 시작됨
         ball_start() # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯) 
  
 def ball_start():   
+    global game_started
     if is_over: # 게임이 끝났다면
         return # 새 공을 보내지 않음(예약돼 있던 다음 공 출발이 실행돼도 여기서 멈춤)
+    game_started = True # 첫 공 출발 시점부터 실제 게임 시작
     ball["zone"] = random.randint(1, GRID * GRID) # 9구역중에서 랜덤으로 공이 나오게 함
     ball["arrive"] = random.uniform(arrive_min, arrive_max) # 1.5~3.0초 중에서 랜덤으로 도착하게 함
     ball["start"] = time.time() # 지금 시간을 출발 시간으로 저장함
@@ -137,8 +140,8 @@ def ball_move():
     # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3으로 수정함
  
 def ball_hit(num): # 얘기한대로 0.7로 잡긴 했는데 실행해보니까 꽤나 여유로워서 나중에 더 짧게 바꿔도 될듯
-    if is_over: # 게임이 끝났다면
-        return # 입력을 무시함(점수와 목숨이 더 바뀌지 않게)
+    if is_over or not game_started: # 게임이 끝났거나 아직 시작 전(5초 카운트 중)이면
+        return # 입력을 무시함(점수와 목숨이 바뀌지 않게)
     passed =  time.time() - ball["start"] # 출발 후 지난 시간
     first_hit = ball["arrive"] - 0.7 # 처음 타격 인정 시간을 공이 도착 전 0.7초로 잡음
     last_hit = ball["arrive"] + 0.7 # 마지막 타격 인정 시간을 공이 도착 후 0.7초로 잡음
