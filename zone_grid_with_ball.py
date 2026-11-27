@@ -115,6 +115,7 @@ def ball_start():
     ball["arrive"] = random.uniform(arrive_min, arrive_max) # 1.5~3.0초 중에서 랜덤으로 도착하게 함
     ball["start"] = time.time() # 지금 시간을 출발 시간으로 저장함
     ball["hit"] = False # 새 공이기 때문에 아직 타격판정을 안한 상태로 표시함
+    timing_bar() # 공 아래에 타이밍바를 그리기 시작함
     ball_move() # 공이 나타나고, 크기가 커지기 시작함
  
 def ball_move(): 
@@ -139,6 +140,36 @@ def ball_move():
     # 중앙에서 반지름 r만큼 떨어진 원을 그림
     # width는 공의 테두리 두께,tags는 공을 지우고 다른곳에 공 위치를 나타낼때 공만 지우기 위해 공을 가리킬려고 만듦
     # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3으로 수정함
+
+def timing_bar():
+    if is_over: # 게임이 끝났다면
+        canvas.delete("bar") # 타이밍 바를 지움
+        return
+
+    passed = time.time() - ball["start"] # 출발 후 지난 시간
+    bar_total = ball["arrive"] + 0.5 # 바 전체가 나타내는 시간 
+
+    cx, cy, cell = zone_center(canvas, ball["zone"]) # 공이 올 칸의 중앙 좌표와 칸 크기
+    left = cx - cell * 0.4 # 중앙에서 왼쪽으로 칸 크기의 40%만큼 바의 왼쪽 끝을 정함
+    right = cx + cell * 0.4 # 중앙에서 오른쪽으로 칸 크기의 40%만큼 바의 오른쪽 끝을 정함
+    top = cy + cell * 0.25 # 중앙에서 아래로 칸 크기의 25%만큼을 바의 위쪽 끝을 정함(공이 최대로 커졌을때가 반지름이 48인데 바의 위쪽은 60이라 무조건 겹치지 않음)
+    bottom = cy + cell * 0.30 # 중앙에서 아래로 칸 크기의 30%만큼을 바의 아래쪽 끝을 정함
+    length = right - left # 바의 가로 길이
+
+    hit_start = left + (ball["arrive"] - 0.5) / bar_total * length # 타격 인정시간을 구하고 전체로 나눠 얼마만큼인지 비율로 나타낸 다음 정확한 위치로 나타냄.
+    now_timing = left + passed / bar_total * length # 공이 출발하고 지난만큼을 전체로 나눠 얼마만큼인지 비율로 나타낸 다음, 바 왼쪽에서 얼마나 오른쪽으로 왔는지 정확한 위치로 나타냄.
+    if now_timing > right: # 바 끝을 넘어가지 않게 함
+        now_timing = right
+
+    canvas.delete("bar") # 이전에 그린 타이밍바만 지움
+    canvas.create_rectangle(left, top, right, bottom, fill="#555", outline="", tags="bar") # 전체시간을 나타내는 회색 바
+    canvas.create_rectangle(hit_start, top, right, bottom, fill="green", outline="", tags="bar") # 타격 인정 시간을 표시하는 초록색 바
+    canvas.create_rectangle(now_timing - 2, top - 6, now_timing + 2, bottom + 6, fill="white", outline="", tags="bar") # 지금이 얼만큼 왔는지 나타내는 흰색 선
+
+    if passed < bar_total: # 아직 타격 인정 시간이 안 끝났으면
+        root.after(10, timing_bar) # 0.01초 뒤에 다시 그림
+    else:
+        canvas.delete("bar") # 타격 인정 시간이 끝나면 바를 지움
  
 def ball_hit(num): # 얘기한대로 0.7로 잡긴 했는데 실행해보니까 꽤나 여유로워서 나중에 더 짧게 바꿔도 될듯-> 0.5로 수정함
     if is_over or not game_started or ball["hit"]: # 게임이 끝났거나 아직 시작 전(5초 카운트 중)이거나 공을 이미 타격판정을 했다면
