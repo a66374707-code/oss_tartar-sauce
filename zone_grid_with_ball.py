@@ -85,7 +85,7 @@ arrive_max = 3.0 # 공이 도착하는데 걸리는 최대시간
 ball_min = 0.02 # 공이 가장 작을 때의 반지름
 ball_max = 0.20 # 공이 가장 클 때의 반지름
  
-ball = {"zone": 0, "start": 0.0, "arrive": 0.0} # zone은 공이 올 구역 번호를 나타내는거라서 처음에는 0으로 둬서 아무구역도 아니라고 표시함 
+ball = {"zone": 0, "start": 0.0, "arrive": 0.0, "hit": False} # zone은 공이 올 구역 번호를 나타내는거라서 처음에는 0으로 둬서 아무구역도 아니라고 표시함, hit는 공을 이미 타격판정을 했는지 표시함 
         
 def zone_center(canvas, zone):   
     w, h = canvas.winfo_width(), canvas.winfo_height() # 창의 크기
@@ -114,6 +114,7 @@ def ball_start():
     ball["zone"] = random.randint(1, GRID * GRID) # 9구역중에서 랜덤으로 공이 나오게 함
     ball["arrive"] = random.uniform(arrive_min, arrive_max) # 1.5~3.0초 중에서 랜덤으로 도착하게 함
     ball["start"] = time.time() # 지금 시간을 출발 시간으로 저장함
+    ball["hit"] = False # 새 공이기 때문에 아직 타격판정을 안한 상태로 표시함
     ball_move() # 공이 나타나고, 크기가 커지기 시작함
  
 def ball_move(): 
@@ -140,13 +141,14 @@ def ball_move():
     # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3으로 수정함
  
 def ball_hit(num): # 얘기한대로 0.7로 잡긴 했는데 실행해보니까 꽤나 여유로워서 나중에 더 짧게 바꿔도 될듯
-    if is_over or not game_started: # 게임이 끝났거나 아직 시작 전(5초 카운트 중)이면
+    if is_over or not game_started or ball["hit"]: # 게임이 끝났거나 아직 시작 전(5초 카운트 중)이거나 공을 이미 타격판정을 했다면
         return # 입력을 무시함(점수와 목숨이 바뀌지 않게)
+    ball["hit"] = True # 공을 타격판정했다고 표시함
     passed =  time.time() - ball["start"] # 출발 후 지난 시간
     first_hit = ball["arrive"] - 0.7 # 처음 타격 인정 시간을 공이 도착 전 0.7초로 잡음
     last_hit = ball["arrive"] + 0.7 # 마지막 타격 인정 시간을 공이 도착 후 0.7초로 잡음
     if num == ball["zone"] and first_hit <= passed <= last_hit: # num이 공이 나오는 칸과 같고, 타격인정 시간 사이에 타격을 했다면
-        print("타격 성공") # 타격성공 , 아직 연속으로 누르면 중복으로 타격성공 인정되는 것은 수정 못함
+        print("타격 성공") # 같으면 타격성공
         add_score(10)
     else:
         print("타격 실패") # 다르면 타격실패
