@@ -104,7 +104,7 @@ def start_time(n=5): # 칸 생성되고 1초뒤에 5초 카운트가 시작됨
                            tags="count")                 
         root.after(1000, lambda: start_time(n - 1)) # 1초 뒤 숫자를 하나 줄여서 다시 실행
     else:
-        ball_start() # 창이 뜨고 5초 뒤에 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯) 
+        ball_start() # 5초 카운트다운이 끝나면 첫 공 출발(시작해놓고 탁구를 칠 자세를 잡아야하니까 5초로 정해둠. 이것도 나중에 바꾸거나 하면 될듯) 
  
 def ball_start():   
     global game_started
