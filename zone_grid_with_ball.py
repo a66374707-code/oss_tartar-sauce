@@ -132,7 +132,7 @@ def ball_move():
     if t < 1:
         root.after(10, ball_move) # 공이 max크기까지 그려지기 전까지 0.010초 마다 다시 그림
     else:
-        root.after(700, ball_start) # 공 도착 후 새로운 공을 다시 보낼때까지 계속 화면에 띄워놓는 것을 1초에서 0.7초로 바꿈(타격 성공 기준이 공 도착 +-0.7초인데 1초면 타격 성공기준이 끝나고 공이 잠깐 남아있어서 헷갈릴까봐)  
+        root.after(500, ball_start) # 공 도착 후 새로운 공을 다시 보낼때까지 계속 화면에 띄워놓는 것을 0.7초에서 0.5초로 바꿈
 
     canvas.delete("ball") # 칸과 숫자는 냅두고 공만 지움
     canvas.create_oval(cx - r, cy - r, cx + r, cy + r, fill="orange", outline="black", width=3, tags="ball")
@@ -140,13 +140,13 @@ def ball_move():
     # width는 공의 테두리 두께,tags는 공을 지우고 다른곳에 공 위치를 나타낼때 공만 지우기 위해 공을 가리킬려고 만듦
     # 공을 탁구공처럼 흰색에다가 테두리 검은색으로 하긴했는데 숫자랑 똑같이 흰색이라 잘 안보임. 두께 3으로 수정함
  
-def ball_hit(num): # 얘기한대로 0.7로 잡긴 했는데 실행해보니까 꽤나 여유로워서 나중에 더 짧게 바꿔도 될듯
+def ball_hit(num): # 얘기한대로 0.7로 잡긴 했는데 실행해보니까 꽤나 여유로워서 나중에 더 짧게 바꿔도 될듯-> 0.5로 수정함
     if is_over or not game_started or ball["hit"]: # 게임이 끝났거나 아직 시작 전(5초 카운트 중)이거나 공을 이미 타격판정을 했다면
         return # 입력을 무시함(점수와 목숨이 바뀌지 않게)
     ball["hit"] = True # 공을 타격판정했다고 표시함
     passed =  time.time() - ball["start"] # 출발 후 지난 시간
-    first_hit = ball["arrive"] - 0.7 # 처음 타격 인정 시간을 공이 도착 전 0.7초로 잡음
-    last_hit = ball["arrive"] + 0.7 # 마지막 타격 인정 시간을 공이 도착 후 0.7초로 잡음
+    first_hit = ball["arrive"] - 0.5 # 처음 타격 인정 시간을 공이 도착 전 0.5초로 잡음
+    last_hit = ball["arrive"] + 0.5 # 마지막 타격 인정 시간을 공이 도착 후 0.5초로 잡음
     if num == ball["zone"] and first_hit <= passed <= last_hit: # num이 공이 나오는 칸과 같고, 타격인정 시간 사이에 타격을 했다면
         print("타격 성공") # 같으면 타격성공
         add_score(10)
