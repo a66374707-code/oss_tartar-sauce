@@ -62,6 +62,26 @@ class TestGetTopN(unittest.TestCase):
         self.assertEqual(top[0], ("user11", 11))
 
 
+class TestGetRank(unittest.TestCase):
+    """get_rank(): 전체 기록에서 닉네임의 순위를 구하는지 검사한다."""
+
+    def test_점수가_높을수록_순위가_앞이다(self):
+        records = {"amy": 100, "bob": 300, "cat": 200}
+        self.assertEqual(ranking.get_rank(records, "bob"), 1)
+        self.assertEqual(ranking.get_rank(records, "cat"), 2)
+        self.assertEqual(ranking.get_rank(records, "amy"), 3)
+
+    def test_동점이면_같은_순위(self):
+        records = {"amy": 100, "bob": 100, "cat": 50}
+        self.assertEqual(ranking.get_rank(records, "amy"), 1)
+        self.assertEqual(ranking.get_rank(records, "bob"), 1)
+        self.assertEqual(ranking.get_rank(records, "cat"), 3)
+
+    def test_TOP_10_밖의_순위도_구한다(self):
+        records = {f"user{i}": i for i in range(12)}
+        self.assertEqual(ranking.get_rank(records, "user0"), 12)
+
+
 class TestRecordFile(unittest.TestCase):
     """load_records / save_records: 파일 저장·불러오기와 손상된 파일 처리를 검사한다."""
 
