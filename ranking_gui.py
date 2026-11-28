@@ -34,16 +34,23 @@ def ask_nickname(parent):
 
 
 def show_result(parent, nickname, score):
-    """게임 종료 후 호출한다. 점수를 등록하고, 이번 점수와 TOP 10을 한 화면에 보여준다."""
-    top = ranking.submit_score(nickname, score)
+    """게임 종료 후 호출한다. 점수를 등록하고, 이번 점수와 내 순위, TOP 10을 한 화면에 보여준다."""
+    result = ranking.register_score(nickname, score)
 
     win = tk.Toplevel(parent)
     win.title("결과")
-    win.geometry("360x480")
+    win.geometry("360x510")
 
     tk.Label(win, text=f"{nickname}님의 점수", font=(FONT, 12)).pack(pady=(15, 0))
     tk.Label(win, text=f"{score}점", font=(FONT, 28, "bold")).pack()
-    tk.Label(win, text="TOP 10", font=(FONT, 16, "bold")).pack(pady=(15, 5))
+
+    if result["is_new_best"]:
+        message = f"개인 최고 기록! (현재 {result['rank']}위)"
+    else:
+        message = f"내 최고 기록 {result['best']}점 (현재 {result['rank']}위)"
+    tk.Label(win, text=message, font=(FONT, 10)).pack(pady=5)
+
+    tk.Label(win, text="TOP 10", font=(FONT, 16, "bold")).pack(pady=(10, 5))
 
     table = ttk.Treeview(win, columns=("rank", "name", "score"), show="headings", height=10)
     table.heading("rank", text="순위")
@@ -54,7 +61,7 @@ def show_result(parent, nickname, score):
     table.column("score", width=90, anchor="center")
     table.tag_configure("me", background="#ffe08a")   # 내 줄 강조
 
-    for rank, (name, point) in enumerate(top, start=1):
+    for rank, (name, point) in enumerate(result["top"], start=1):
         tag = ("me",) if name == nickname else ()
         table.insert("", "end", values=(rank, name, point), tags=tag)
     table.pack(padx=15)
