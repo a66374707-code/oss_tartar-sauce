@@ -170,6 +170,11 @@ def ball_start():
     global game_started
     if is_over: # 게임이 끝났다면
         return # 새 공을 보내지 않음(예약돼 있던 다음 공 출발이 실행돼도 여기서 멈춤)
+    if game_started and not ball["hit"]: # 첫 공이 아니고, 공을 타격하지 못했다면
+            print("공 놓침") # 공을 치지 못하고 놓쳤다고 출력함
+            add_lives(-1) # 공을 놓치면 목숨을 1개 감소함
+            if is_over:
+                return 
     game_started = True # 첫 공 출발 시점부터 실제 게임 시작
     ball["zone"] = random.randint(1, GRID * GRID) # 9구역중에서 랜덤으로 공이 나오게 함
     ball["arrive"] = random.uniform(arrive_min, arrive_max) # 1.5~3.0초 중에서 랜덤으로 도착하게 함
