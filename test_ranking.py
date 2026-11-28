@@ -119,8 +119,7 @@ class TestSubmitScore(unittest.TestCase):
         self.path = os.path.join(self.tmp.name, "r.json")
 
     def test_점수를_차례로_등록하면_최고_점수만_남는다(self):
-        self.assertEqual(ranking.submit_score("amy", 100, self.path),
-                         [("amy", 100)])
+        self.assertEqual(ranking.submit_score("amy", 100, self.path), [("amy", 100)])
         self.assertEqual(ranking.submit_score("bob", 300, self.path),
                          [("bob", 300), ("amy", 100)])
         self.assertEqual(ranking.submit_score("amy", 50, self.path),
@@ -128,6 +127,31 @@ class TestSubmitScore(unittest.TestCase):
         self.assertEqual(ranking.submit_score("amy", 500, self.path),
                          [("amy", 500), ("bob", 300)])
         self.assertEqual(ranking.load_records(self.path), {"amy": 500, "bob": 300})
+
+
+class TestRegisterScore(unittest.TestCase):
+    """register_score(): 최고 기록 여부와 현재 순위까지 돌려주는지 검사한다."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.path = os.path.join(self.tmp.name, "r.json")
+
+    def test_최고_기록_여부와_순위를_돌려준다(self):
+        first = ranking.register_score("amy", 100, self.path)
+        self.assertTrue(first["is_new_best"])
+        self.assertEqual((first["best"], first["rank"]), (100, 1))
+
+        ranking.register_score("bob", 300, self.path)
+
+        lower = ranking.register_score("amy", 50, self.path)
+        self.assertFalse(lower["is_new_best"])
+        self.assertEqual((lower["best"], lower["rank"]), (100, 2))
+
+        higher = ranking.register_score("amy", 500, self.path)
+        self.assertTrue(higher["is_new_best"])
+        self.assertEqual((higher["best"], higher["rank"]), (500, 1))
+        self.assertEqual(higher["top"], [("amy", 500), ("bob", 300)])
 
 
 if __name__ == "__main__":
