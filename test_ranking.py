@@ -6,7 +6,7 @@ import unittest
 
 import ranking
 
-"""닉네임 검사"""
+
 class TestValidateNickname(unittest.TestCase):
     """validate_nickname(): 올바르면 None, 틀리면 안내 메시지를 반환하는지 검사한다."""
 
@@ -22,7 +22,7 @@ class TestValidateNickname(unittest.TestCase):
     def test_한글은_오류(self):
         self.assertIsNotNone(ranking.validate_nickname("홍길동"))
 
-"""최고 점수 유지"""
+
 class TestUpdateRecord(unittest.TestCase):
     """update_record(): 같은 닉네임은 최고 점수 하나만 유지하는지 검사한다."""
 
@@ -41,7 +41,7 @@ class TestUpdateRecord(unittest.TestCase):
         self.assertFalse(ranking.update_record(records, "amy", 50))
         self.assertEqual(records, {"amy": 100})
 
-"""점수순으로 정렬"""
+
 class TestGetTopN(unittest.TestCase):
     """get_top_n(): 점수 높은 순으로 정렬해 상위 n개만 돌려주는지 검사한다."""
 
@@ -61,7 +61,27 @@ class TestGetTopN(unittest.TestCase):
         self.assertEqual(len(top), 10)
         self.assertEqual(top[0], ("user11", 11))
 
-"""파일 저장과 손상된 파일 처리"""
+
+class TestGetRank(unittest.TestCase):
+    """get_rank(): 전체 기록에서 닉네임의 순위를 구하는지 검사한다."""
+
+    def test_점수가_높을수록_순위가_앞이다(self):
+        records = {"amy": 100, "bob": 300, "cat": 200}
+        self.assertEqual(ranking.get_rank(records, "bob"), 1)
+        self.assertEqual(ranking.get_rank(records, "cat"), 2)
+        self.assertEqual(ranking.get_rank(records, "amy"), 3)
+
+    def test_동점이면_같은_순위(self):
+        records = {"amy": 100, "bob": 100, "cat": 50}
+        self.assertEqual(ranking.get_rank(records, "amy"), 1)
+        self.assertEqual(ranking.get_rank(records, "bob"), 1)
+        self.assertEqual(ranking.get_rank(records, "cat"), 3)
+
+    def test_TOP_10_밖의_순위도_구한다(self):
+        records = {f"user{i}": i for i in range(12)}
+        self.assertEqual(ranking.get_rank(records, "user0"), 12)
+
+
 class TestRecordFile(unittest.TestCase):
     """load_records / save_records: 파일 저장·불러오기와 손상된 파일 처리를 검사한다."""
 
@@ -89,7 +109,7 @@ class TestRecordFile(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(ranking.load_records(self.path), {})
 
-"""점수 등록"""
+
 class TestSubmitScore(unittest.TestCase):
     """submit_score(): 불러오기 → 갱신 → 저장 → TOP 10 반환이 이어서 동작하는지 검사한다."""
 
